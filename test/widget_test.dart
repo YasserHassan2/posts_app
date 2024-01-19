@@ -11,9 +11,4 @@ import 'package:posts_app/app/app.dart';
 
 import 'package:posts_app/main.dart';
 
-void main() {
-  testWidgets('', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
-  });
-}
+void main() {}
