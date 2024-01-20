@@ -29,6 +29,7 @@ class _MainViewState extends State<MainView> {
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   bool _displayLoadingIndicator = false;
   List<PostModel> posts = [];
+  int page = 1;
 
   void startLoading() {
     setState(() {
@@ -44,7 +45,7 @@ class _MainViewState extends State<MainView> {
 
   @override
   void initState() {
-    BlocProvider.of<MainBloc>(context).add(getPosts());
+    BlocProvider.of<MainBloc>(context).add(getPosts(page: page));
     super.initState();
   }
 
@@ -78,26 +79,34 @@ class _MainViewState extends State<MainView> {
           stopLoading();
         }
         if (state is MainSuccess) {
-          this.posts = state.listOfPosts;
+          this.posts.addAll(state.listOfPosts);
+          page++;
         }
 
         if (state is MainFailure) {
           CustomDialog(context).showErrorDialog('', '', state.message);
         }
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: AppSize.s12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Text(
-            //   "${AppStrings.searchForMovie.tr()}",
-            //   style: getRegularStyle(color: ColorManager.labelsTextColor),
-            // ),
-            posts.isNotEmpty
-                ? Expanded(child: PostsListWidget(posts))
-                : Container()
-          ],
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollEndNotification &&
+              notification.metrics.extentAfter == 0) {
+            // User has reached the end of the list
+            // Load more data or trigger pagination in flutter
+            BlocProvider.of<MainBloc>(context).add(getPosts(page: page));
+          }
+          return false;
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: AppSize.s12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              posts.isNotEmpty
+                  ? Expanded(child: PostsListWidget(posts))
+                  : Container()
+            ],
+          ),
         ),
       ),
     );
@@ -154,7 +163,8 @@ class _MainViewState extends State<MainView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          postModel.owner.firstName +" "+
+                          postModel.owner.firstName +
+                                  " " +
                                   postModel.owner.lastName ??
                               "-",
                           textAlign: TextAlign.start,

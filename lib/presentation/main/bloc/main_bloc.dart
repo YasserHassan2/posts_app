@@ -20,84 +20,20 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   FutureOr<void> _getPosts(getPosts event, Emitter<MainState> emit) async {
     emit(MainLoading());
-    final database =
-    await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-    final postsDao = database.postsDao;
+    PostsUseCase postsUseCase = instance<PostsUseCase>();
+    (await postsUseCase.execute(PostsInput(event.page))).fold(
+            (failure) =>
+        {
+          // left -> failure
+          //emit failure state
+          emit(MainFailure(
+              failure.message.toString(), failure.code.toString()))
+        }, (listOfPosts) async {
+      // right -> data (success)
+      // content
+      // emit success state
 
-    try {
-      // check if there any data in posts local database
-      List<PostEntity> postsList = await postsDao.findAllPosts();
-      if (postsList.isNotEmpty) {
-        // emit(MainSuccess(postsList));
-      } else {
-        PostsUseCase postsUseCase = instance<PostsUseCase>();
-
-        (await postsUseCase.execute(PostsInput())).fold(
-                (failure) =>
-            {
-              // left -> failure
-              //emit failure state
-              emit(MainFailure(
-                  failure.message.toString(), failure.code.toString()))
-            }, (listOfPosts) async {
-          // right -> data (success)
-          // content
-          // emit success state
-          List<PostEntity> postsList = [];
-          listOfPosts.forEach((element) {
-            postsList.add(PostEntity(
-                element.id,
-                element.image,
-                element.likes,
-                element.text,
-                element.publishDate.toString(),
-                element.owner.firstName,
-                element.owner.lastName,
-                element.image));
-          });
-
-          //save posts to local database
-          postsList.forEach((element) async {
-            await postsDao.insertPost(element);
-          });
-
-          emit(MainSuccess(listOfPosts));
-        });
-      }
-    } catch (e) {
-      PostsUseCase postsUseCase = instance<PostsUseCase>();
-
-      (await postsUseCase.execute(PostsInput())).fold(
-              (failure) =>
-          {
-            // left -> failure
-            //emit failure state
-            emit(MainFailure(
-                failure.message.toString(), failure.code.toString()))
-          }, (listOfPosts) async {
-        // right -> data (success)
-        // content
-        // emit success state
-        List<PostEntity> postsList = [];
-        listOfPosts.forEach((element) {
-          postsList.add(PostEntity(
-              element.id,
-              element.image,
-              element.likes,
-              element.text,
-              element.publishDate.toString(),
-              element.owner.firstName,
-              element.owner.lastName,
-              element.image));
-        });
-
-        emit(MainSuccess(listOfPosts));
-
-        await Future.forEach(postsList, (PostEntity post) async {
-          postsDao.insertPost(post);
-        });
-
-      });
-    }
+      emit(MainSuccess(listOfPosts));
+    });
   }
 }

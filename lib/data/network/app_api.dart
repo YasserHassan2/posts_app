@@ -12,5 +12,7 @@ abstract class AppServiceClient {
   factory AppServiceClient(Dio dio, {String baseUrl}) = _AppServiceClient;
 
   @GET(Endpoints.posts)
-  Future<dynamic> getPosts();
+  Future<dynamic> getPosts(
+    @Query('page') int page,
+  );
 }

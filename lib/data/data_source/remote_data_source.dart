@@ -1,8 +1,7 @@
-
 import '../network/app_api.dart';
 
 abstract class RemoteDataSource {
-  Future<Map> getPosts();
+  Future<Map> getPosts(int page);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -11,7 +10,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   RemoteDataSourceImpl(this._appServiceClient);
 
   @override
-  Future<Map> getPosts() async {
-    return await _appServiceClient.getPosts();
+  Future<Map> getPosts(int page) async {
+    return await _appServiceClient.getPosts(page);
   }
 }

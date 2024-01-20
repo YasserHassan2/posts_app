@@ -17,19 +17,34 @@ class RepositoryImpl implements Repository {
       this._remoteDataSource, this._networkInfo, this._localDataSource);
 
   @override
-  Future<Either<Failure, List<PostModel>>> getPosts() async {
+  Future<Either<Failure, List<PostModel>>> getPosts(int page) async {
     if (await _networkInfo.isConnected) {
       // its connected to internet, its safe to call API
 
       try {
         //getPosts from cache
+        if (page <= 1) {
+          final response = await _localDataSource.getMainData();
 
-        final response = await _localDataSource.getMainData();
-
-        return Right(response);
+          return Right(response);
+        } else {
+          final response =
+              await _remoteDataSource.getPosts(page >= 1 ? page : 1);
+          List<PostModel> posts = [];
+          if (response["data"] != null) {
+            posts = List<PostModel>.from(
+                response["data"].map((x) => PostModel.fromJson(x)));
+            _localDataSource.saveMainDataToCache(posts);
+            return Right(posts);
+          } else {
+            return Left(Failure(ApiInternalStatus.FAILURE,
+                response["error"] ?? ResponseMessage.DEFAULT));
+          }
+        }
       } catch (cacheError) {
         try {
-          final response = await _remoteDataSource.getPosts();
+          final response =
+              await _remoteDataSource.getPosts(page >= 1 ? page : 1);
           List<PostModel> posts = [];
           if (response["data"] != null) {
             posts = List<PostModel>.from(

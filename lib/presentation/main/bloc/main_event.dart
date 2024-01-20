@@ -4,5 +4,6 @@ part of 'main_bloc.dart';
 abstract class MainEvent {}
 
 class getPosts extends MainEvent {
-  getPosts();
+  int page;
+  getPosts({required this.page});
 }

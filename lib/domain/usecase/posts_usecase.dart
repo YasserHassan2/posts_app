@@ -12,8 +12,12 @@ class PostsUseCase implements BaseUseCase<PostsInput, List<PostModel>> {
 
   @override
   Future<Either<Failure, List<PostModel>>> execute(PostsInput input) async {
-    return await _repository.getPosts();
+    return await _repository.getPosts(input.page);
   }
 }
 
-class PostsInput {}
+class PostsInput {
+  int page;
+
+  PostsInput(this.page);
+}
