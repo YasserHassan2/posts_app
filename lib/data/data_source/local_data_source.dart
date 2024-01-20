@@ -1,45 +1,40 @@
+import '../../domain/model/post_model.dart';
+import '../network/error_handler.dart';
 
-
-const CACHE_HOME_KEY = "CACHE_HOME_KEY";
-const CACHE_DRIVER_KEY = "CACHE_DRIVER_KEY";
-const CACHE_HOME_INTERVAL = 60 * 1000; // 1 minute cache in millis
-const CACHE_STORE_DETAILS_KEY = "CACHE_STORE_DETAILS_KEY";
-const CACHE_STORE_DETAILS_INTERVAL = 60 * 1000; // 30s in millis
+const CACHE_MAIN_KEY = "CACHE_MAIN_KEY";
+const CACHE_MAIN_INTERVAL = 60 * 1000; // 1 minute cache in millis
 
 abstract class LocalDataSource {
-  // Future<HomeResponse> getHomeData();
-  //
-  // Future<void> saveHomeToCache(HomeResponse homeResponse);
+  Future<List<PostModel>> getMainData();
+
+  Future<void> saveMainDataToCache(List<PostModel> postsList);
 
   void clearCache();
 
   void removeFromCache(String key);
-
 }
 
 class LocalDataSourceImpl implements LocalDataSource {
   // run time cache
   Map<String, CachedItem> cacheMap = Map();
 
-  // @override
-  // Future<HomeResponse> getHomeData() async {
-  //   CachedItem? cachedItem = cacheMap[CACHE_HOME_KEY];
-  //
-  //   if (cachedItem != null && cachedItem.isValid(CACHE_HOME_INTERVAL)) {
-  //     // return the response from cache
-  //     return cachedItem.data;
-  //   } else {
-  //     // return an error that cache is not there or its not valid
-  //     throw ErrorHandler.handle(DataSource.CACHE_ERROR);
-  //   }
-  // }
-  //
-  // @override
-  // Future<void> saveHomeToCache(HomeResponse homeResponse) async {
-  //   cacheMap[CACHE_HOME_KEY] = CachedItem(homeResponse);
-  // }
+  @override
+  Future<List<PostModel>> getMainData() async {
+    CachedItem? cachedItem = cacheMap[CACHE_MAIN_KEY];
 
+    if (cachedItem != null && cachedItem.isValid(CACHE_MAIN_INTERVAL)) {
+      // return the response from cache
+      return cachedItem.data;
+    } else {
+      // return an error that cache is not there or its not valid
+      throw ErrorHandler.handle(DataSource.CACHE_ERROR);
+    }
+  }
 
+  @override
+  Future<void> saveMainDataToCache(List<PostModel> postList) async {
+    cacheMap[CACHE_MAIN_KEY] = CachedItem(postList);
+  }
 
   @override
   void clearCache() {
@@ -50,7 +45,6 @@ class LocalDataSourceImpl implements LocalDataSource {
   void removeFromCache(String key) {
     cacheMap.remove(key);
   }
-
 }
 
 class CachedItem {

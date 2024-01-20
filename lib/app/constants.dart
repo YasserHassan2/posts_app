@@ -29,8 +29,5 @@ class UserTypeConstants {
 }
 
 class Endpoints {
-  static const String popularMovies = "/3/movie/popular";
-  static const String searchMovies = "/3/search/movie";
-  static const String movieDetails = "/3/movie/";
   static const String posts = "post";
 }

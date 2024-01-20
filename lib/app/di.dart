@@ -29,7 +29,7 @@ Future<void> initAppModule() async {
 
   // network info
   instance.registerLazySingleton<NetworkInfo>(
-      () => NetworkInfoImpl(InternetConnectionChecker()));
+          () => NetworkInfoImpl(InternetConnectionChecker()));
 
   // dio factory
   instance.registerLazySingleton<DioFactory>(() => DioFactory(instance()));
@@ -40,15 +40,16 @@ Future<void> initAppModule() async {
 
   // remote data source
   instance.registerLazySingleton<RemoteDataSource>(
-      () => RemoteDataSourceImpl(instance<AppServiceClient>()));
+          () => RemoteDataSourceImpl(instance<AppServiceClient>()));
 
   // local data source
   instance.registerLazySingleton<LocalDataSource>(() => LocalDataSourceImpl());
 
   // repository
   instance.registerLazySingleton<Repository>(
-      () => RepositoryImpl(instance(), instance()
-      ));
+          () =>
+          RepositoryImpl(instance(), instance(),
+              instance()));
 }
 
 initMainModule() {
