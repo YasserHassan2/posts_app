@@ -114,6 +114,7 @@ class _MainViewState extends State<MainView> {
 
   Widget PostsListWidget(List<PostModel> postsList) {
     return ListView.builder(
+      key: GlobalKey(debugLabel: "listView"),
       itemCount: postsList.length, // Add 1 for loading indicator
       itemBuilder: (context, index) {
         return postItemWidget(postsList[index]);

@@ -8,7 +8,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:posts_app/app/app.dart';
+import 'package:posts_app/app/di.dart';
+import 'package:posts_app/domain/usecase/posts_usecase.dart';
 
 import 'package:posts_app/main.dart';
+import 'package:posts_app/presentation/home/home_view.dart';
 
-void main() {}
+void main() {
+  testWidgets('test widgets of main screen', (WidgetTester tester) async {
+    //Arrange - Pump MyApp() widget to tester
+    // PostsUseCase postsUseCase = instance<PostsUseCase>();
+    // await tester.pumpWidget(MyApp());
+    //
+    // //Act - Find TextView by type
+    // var textView = find.byType(Text);
+    //
+    // //Assert - Check that button widget is present
+    // expect(textView, findsOneWidget);
+  });
+}

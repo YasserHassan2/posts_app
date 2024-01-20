@@ -50,6 +50,8 @@ Future<void> initAppModule() async {
           () =>
           RepositoryImpl(instance(), instance(),
               instance()));
+
+
 }
 
 initMainModule() {
